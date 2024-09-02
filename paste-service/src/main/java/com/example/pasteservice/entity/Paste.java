@@ -31,7 +31,7 @@ public class Paste {
     @Size(max = 100)
     private String link;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private User user;

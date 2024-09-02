@@ -32,7 +32,7 @@ public class User {
     @Size(min = 4, max = 30)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Paste> pasteList;
 
