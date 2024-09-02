@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    password: root
+    url: jdbc:postgresql://localhost:5432/pastebin
+    username: postgres
+server:
+  port: 8080
