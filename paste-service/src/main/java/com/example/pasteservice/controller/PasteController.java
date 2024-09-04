@@ -27,18 +27,18 @@ public class PasteController {
         return this.pasteService.getAllPastes();
     }
 
-    @GetMapping("find-by-user-id/{userId:\\d+}")
+    @GetMapping("find-by-user-id/{userId}")
     public List<Paste> findByUserId(@PathVariable Long userId) {
         return this.pasteService.getPastesByUserId(userId);
     }
 
-    @GetMapping("find-by-id/{pasteId:\\d+}")
+    @GetMapping("find-by-id/{pasteId}")
     public Paste findById(@PathVariable Long pasteId) {
         Optional<Paste> paste = this.pasteService.getPasteById(pasteId);
         return paste.orElseThrow(() -> new PasteNotFoundException("Paste with id " + pasteId + " not found."));
     }
 
-    @PostMapping("{userId:\\d+}/create")
+    @PostMapping("{userId}/create")
     public ResponseEntity<?> createPaste(@Valid @RequestBody NewPastePayload payload,
                                          @PathVariable Long userId,
                                          UriComponentsBuilder uriBuilder) {
@@ -50,7 +50,7 @@ public class PasteController {
                 .body(paste);
     }
 
-    @PatchMapping("update/{pasteId:\\d+}")
+    @PatchMapping("update/{pasteId}")
     public ResponseEntity<?> updatePaste(@PathVariable("pasteId") Long pasteId,
                                          @Valid @RequestBody UpdatePastePayload payload
                                          ) {
@@ -58,7 +58,7 @@ public class PasteController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("delete/{pasteId:\\d+}")
+    @DeleteMapping("delete/{pasteId}")
     public ResponseEntity<?> deletePaste(@PathVariable("pasteId") Long pasteId) {
         this.pasteService.deletePaste(pasteId);
         return ResponseEntity.noContent().build();

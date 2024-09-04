@@ -1,13 +1,15 @@
 package com.example.pasteservice.service;
 
-import com.example.pasteservice.entity.Paste;
+import com.example.pasteservice.entity.Role;
 import com.example.pasteservice.entity.User;
 import com.example.pasteservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +21,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(String username, String password) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         User user = User.builder()
                 .username(username)
-                .password(password)
+                .password(passwordEncoder.encode(password))
+                .role(Role.CLIENT)
                 .build();
+
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username is already taken.");
+        }
         return this.userRepository.save(user);
     }
 
@@ -32,11 +40,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("@userSecurityService.isThisUserOrAdmin(#id, authentication)")
     public void delete(Long id) {
         this.userRepository.delete(id);
     }
 
     @Override
+    @Transactional
+    @PreAuthorize("@userSecurityService.isThisUserOrAdmin(#id, authentication)")
     public void updateProfile(String username, String password, Long id) {
         Optional<User> user = this.userRepository.findById(id);
        if (user.isPresent()) {
@@ -45,7 +57,6 @@ public class UserServiceImpl implements UserService {
            currentUser.setUsername(username);
            this.userRepository.save(currentUser);
        }
-
     }
 
     @Override

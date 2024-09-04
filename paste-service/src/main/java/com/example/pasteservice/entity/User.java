@@ -22,15 +22,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     @NotNull
     @Size(min = 4, max = 50)
     private String username;
 
     @Column(name = "password")
     @NotNull
-    @Size(min = 4, max = 30)
+    @Size(min = 4, max = 100)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    @NotNull
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

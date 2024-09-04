@@ -8,7 +8,7 @@ public record UpdateUserPayload(
         @Size(min = 4, max = 50, message = "{pastebin.users.update.errors.username_size_is_invalid}")
         String username,
         @NotNull(message = "{pastebin.users.update.errors.password_is_null}")
-        @Size(min = 4, max = 30, message = "{pastebin.users.update.errors.password_size_is_invalid}")
+        @Size(min = 4, max = 100, message = "{pastebin.users.update.errors.password_size_is_invalid}")
         String password
 ) {
 }

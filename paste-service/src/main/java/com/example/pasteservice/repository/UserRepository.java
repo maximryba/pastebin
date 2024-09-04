@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 
-    User findById(long id);
+    Optional<User> findById(Long id);
 
     @Modifying
     @Query(value = """
@@ -23,5 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void delete(Long id);
 
     List<User> findAll();
+
+    boolean existsByUsername(String username);
 
 }

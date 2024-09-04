@@ -5,6 +5,7 @@ import com.example.pasteservice.repository.PasteRepository;
 import com.example.pasteservice.repository.UserRepository;
 import com.example.pasteservice.service.util.LinkGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class PasteServiceImpl implements PasteService {
     }
 
     @Override
+    @PreAuthorize("@pasteSecurityService.isOwner(#id, authentication.name)")
     public void updatePaste(Long id, String text) {
         Paste updatePaste = this.pasteRepository.getReferenceById(id);
         updatePaste.setText(text);
@@ -54,6 +56,7 @@ public class PasteServiceImpl implements PasteService {
     }
 
     @Override
+    @PreAuthorize("@pasteSecurityService.isOwner(#id, authentication.name)")
     public void deletePaste(Long id) {
         this.pasteRepository.deleteById(id);
     }

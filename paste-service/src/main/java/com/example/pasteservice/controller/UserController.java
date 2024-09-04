@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("find-by-username/{username}")
-    public User findUserById(@PathVariable("username") String username) {
+    public User findUserByUsername(@PathVariable("username") String username) {
         Optional<User> findUser = this.userService.findByUsername(username);
         return findUser.orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found.") );
     }
@@ -44,20 +44,20 @@ public class UserController {
                 .body(user);
     }
 
-    @GetMapping("find-by-id/{userId:\\d+}")
+    @GetMapping("find-by-id/{userId}")
     public User findUserById(@PathVariable("userId") Long userId) {
         Optional<User> findUser = this.userService.findById(userId);
         return findUser.orElseThrow(() -> new UserNotFoundException("User with id " + userId + " not found.") );
     }
 
-    @PatchMapping("update/{userId:\\d+}")
+    @PatchMapping("update/{userId}")
     public ResponseEntity<?> updateProfile(@PathVariable("userId") Long id,
                                            @Valid @RequestBody UpdateUserPayload payload) {
         this.userService.updateProfile(payload.username(), payload.password(), id);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("delete/{userId:\\d+}")
+    @DeleteMapping("delete/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long id) {
         this.userService.delete(id);
         return ResponseEntity.noContent().build();
