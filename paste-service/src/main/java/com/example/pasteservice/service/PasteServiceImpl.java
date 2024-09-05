@@ -4,11 +4,13 @@ import com.example.pasteservice.entity.Paste;
 import com.example.pasteservice.repository.PasteRepository;
 import com.example.pasteservice.repository.UserRepository;
 import com.example.pasteservice.service.util.LinkGenerator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -35,6 +37,7 @@ public class PasteServiceImpl implements PasteService {
     }
 
     @Override
+    @Transactional
     public Paste createPaste(String text, Long userId) {
 
         String link = LinkGenerator.generateRandomLink();
@@ -48,14 +51,17 @@ public class PasteServiceImpl implements PasteService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("@pasteSecurityService.isOwner(#id, authentication.name)")
     public void updatePaste(Long id, String text) {
-        Paste updatePaste = this.pasteRepository.getReferenceById(id);
-        updatePaste.setText(text);
-        this.pasteRepository.save(updatePaste);
+        this.pasteRepository.findById(id)
+                .ifPresentOrElse(paste -> paste.setText(text), () -> {
+                    throw new NoSuchElementException();
+                });
     }
 
     @Override
+    @Transactional
     @PreAuthorize("@pasteSecurityService.isOwner(#id, authentication.name)")
     public void deletePaste(Long id) {
         this.pasteRepository.deleteById(id);

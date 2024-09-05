@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -50,13 +51,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("@userSecurityService.isThisUserOrAdmin(#id, authentication)")
     public void updateProfile(String username, String password, Long id) {
-        Optional<User> user = this.userRepository.findById(id);
-       if (user.isPresent()) {
-           User currentUser = user.get();
-           currentUser.setPassword(password);
-           currentUser.setUsername(username);
-           this.userRepository.save(currentUser);
-       }
+        this.userRepository.findById(id)
+                .ifPresentOrElse(user -> {
+                    user.setUsername(username);
+                    user.setPassword(password);
+                }, () -> {
+                    throw new NoSuchElementException();
+                });
     }
 
     @Override
